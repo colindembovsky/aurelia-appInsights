@@ -19,10 +19,11 @@ This plugin allows you to add page [Application Insights](http://azure.microsoft
 </script>
 ```
 2. Include the src\resources folder in your project (make sure you have the aurelia-appInsights.js (or ts) files). The plugin assumes that you are manually inserting the AI script using the snippet from the Portal.
-3. Include the plugin in main.js using ```.plugin("./resources/aurelia-appInsights")```
+3. Include the plugin in main.js using ```.plugin("./resources/aurelia-appInsights")```. You can set 'global properties' if you want to.
 ```
 import auf = require("aurelia-framework");
 import aul = require("aurelia-logging-console");
+import aai = require("resources/aurelia-appInsights");
 
 auf.LogManager.addAppender(new aul.ConsoleAppender());
 auf.LogManager.setLevel(auf.LogManager.levels.debug);
@@ -38,11 +39,18 @@ export function configure(aurelia: auf.Aurelia) {
 		.eventAggregator()
 		.plugin("./resources/aurelia-appInsights");
 
+	// optional: set global ai properties
+    // these properties will be sent with every event
+	var ai = aurelia.container.get<aai.AureliaAppInsights>(aai.AureliaAppInsights);
+	ai.properties = {
+		environment: "Testing"
+	};
+
 	// start Aurelia
 	aurelia.start().then((a: auf.Aurelia) => a.setRoot("dist/app", document.body));
 }
 ```
-4. You can set the key programatically too. Just inject AureliaAppInsights into your class constructor and set the key on the object:
+4. You can set the key programatically too. Just inject AureliaAppInsights into your class constructor and set the key on the object (or set it in main.js using container.get() as above):
 ```
 import aur = require("aurelia-router");
 import aai = require("resources/aurelia-appInsights");
