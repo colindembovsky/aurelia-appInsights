@@ -1,8 +1,12 @@
-define(["require", "exports", "aurelia-router"], function (require, exports, aur) {
+define(["require", "exports", "aurelia-framework", "aurelia-router"], function (require, exports, auf, aur) {
     var App = (function () {
         function App(router) {
+            var _this = this;
             this.router = router;
+            this.logger = auf.LogManager.getLogger("App");
+            this.logger.info("Constructing app");
             this.router.configure(function (config) {
+                _this.logger.debug("Configuring router");
                 config.title = "Aurelia VS/TS";
                 config.map([
                     { route: ["", "welcome"], moduleId: "views/welcome", nav: true, title: "Welcome to VS/TS" },

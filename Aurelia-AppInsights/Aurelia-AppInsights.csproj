@@ -22,8 +22,8 @@
     <IISExpressUseClassicPipelineMode />
     <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>9c84e52d</NuGetPackageImportStamp>
-    <ApplicationInsightsResourceId>/subscriptions/subsciptionId/resourcegroups/resourceGroup/providers/microsoft.insights/components/ai-resource</ApplicationInsightsResourceId>
+    <NuGetPackageImportStamp>186e8939</NuGetPackageImportStamp>
+    <ApplicationInsightsResourceId>/subscriptions/f12d732d-4a47-4edc-a11b-d6dc6909ddbe/resourcegroups/Default-ApplicationInsights-CentralUS/providers/microsoft.insights/components/Aurelia-AppInsights</ApplicationInsightsResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

@@ -32,17 +32,32 @@ export class AppInsightsLogAppender implements auf.LogAppender {
 export class AureliaAppInsights {
 	static inject = [aue.EventAggregator];
 	private _key: string = null;
+	private _properties = {};
 
+	/**
+	 * Set the AI key
+	 */
 	public set key(aiKey: string) {
 		this._key = aiKey;
 		appInsights.config.instrumentationKey = aiKey;
 	}
 
+	/**
+	 * Set debugging
+	 */
 	public set debug(value: boolean) {
 		appInsights.config.enableDebug = value;
 	}
 
+	/**
+	 * Set 'global' properties - these will be sent with each AI log
+	 */
+	public set properties(value: {}) {
+		this._properties = value;
+	}
+
 	constructor(private eventAgg: aue.EventAggregator) {
+		this._key = appInsights.config.instrumentationKey;
 		this.subscribeToNavEvents();
 		this.addLogAppender();
 	}
@@ -54,19 +69,23 @@ export class AureliaAppInsights {
 
 	navCompleted = (instruction: aur.INavigationInstruction) => {
 		try {
+			console.log("-- in nav complete");
 			this.guardKey();
-			appInsights.trackPageView(instruction.fragment, window.location.href);
+			appInsights.trackPageView(instruction.fragment, window.location.href, this._properties);
+			console.log("Tracked AI nav completion event");
 		} catch (e) {
-			console.debug("Error sending AI trackPageView: " + e.message);
+			console.debug("Error sending AI trackPageView: %O", e);
 		}
 	}
 
 	navError = (navError: aur.INavigationError) => {
 		try {
+			console.log("-- in nav err");
 			this.guardKey();
 			appInsights.trackException(navError.result.output);
+			console.log("Tracked AI nav error event");
 		} catch (e) {
-			console.debug("Error sending AI trackException");
+			console.debug("Error sending AI trackPageView: %O", e);
 		}
 	}
 
