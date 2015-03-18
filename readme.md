@@ -1,8 +1,10 @@
 ﻿# aurelia-appInsights
 
-This plugin allows you to add page [Application Insights](http://azure.microsoft.com/en-us/documentation/articles/app-insights-web-track-usage-custom-events-metrics/) tracking and tracing for your [Aurelia](http://www.aurelia.io/) applications.
+This plugin allows you to add _atuomatic_ [Application Insights](http://azure.microsoft.com/en-us/documentation/articles/app-insights-web-track-usage-custom-events-metrics/) page tracking and tracing for your [Aurelia](http://www.aurelia.io/) applications.
 
 > The solution was developed using Visual Studio 2015 and [TypeScript](http://www.typescriptlang.org/). If you're using TypeScript, you can inlcude the .ts files. If not, then just include the .js files to add the plugin.
+
+> This plugin hooks into the router ```complete``` and ```error``` events. If you want to perform other Application Insights tracking (like timing events or adding metrics) then you can simply call the appInsights functions directly. The point of this plugin is to provide _page_ tracking and diagnostic tracing out-of-the-box.
 
 ## Installing the Plugin
 
