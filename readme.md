@@ -7,7 +7,7 @@ This plugin allows you to add page [Application Insights](http://azure.microsoft
 ## Installing the Plugin
 
 1. Include Application Insights. You can do this in your main page (where you specify ```aurelia-app``` or ```aurelia-main```). Copy the JavaScript Application Insights snippet from the Azure portal and paste it into the ```<head>``` of the page:
-```
+```javascript
 <script>
     var appInsights = window.appInsights || function (config) {
         function s(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } } var t = { config: config }, r = document, f = window, e = "script", o = r.createElement(e), i, u; for (o.src = config.url || "//az416426.vo.msecnd.net/scripts/a/ai.0.js", r.getElementsByTagName(e)[0].parentNode.appendChild(o), t.cookie = r.cookie, t.queue = [], i = ["Event", "Exception", "Metric", "PageView", "Trace"]; i.length;) s("track" + i.pop()); return config.disableExceptionTracking || (i = "onerror", s("_" + i), u = f[i], f[i] = function (config, r, f, e, o) { var s = u && u(config, r, f, e, o); return s !== !0 && t["_" + i](config, r, f, e, o), s }), t
@@ -20,7 +20,7 @@ This plugin allows you to add page [Application Insights](http://azure.microsoft
 ```
 2. Include the src\resources folder in your project (make sure you have the aurelia-appInsights.js (or ts) files). The plugin assumes that you are manually inserting the AI script using the snippet from the Portal.
 3. Include the plugin in main.js using ```.plugin("./resources/aurelia-appInsights")```. You can set 'global properties' if you want to.
-```
+```typescript
 import auf = require("aurelia-framework");
 import aul = require("aurelia-logging-console");
 import aai = require("resources/aurelia-appInsights");
@@ -51,7 +51,7 @@ export function configure(aurelia: auf.Aurelia) {
 }
 ```
 4. You can set the key programatically too. Just inject AureliaAppInsights into your class constructor and set the key on the object (or set it in main.js using container.get() as above):
-```
+```typescript
 import aur = require("aurelia-router");
 import aai = require("resources/aurelia-appInsights");
 
