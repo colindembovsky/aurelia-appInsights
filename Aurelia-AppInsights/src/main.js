@@ -1,6 +1,6 @@
 define(["require", "exports", "aurelia-framework", "aurelia-logging-console"], function (require, exports, auf, aul) {
     auf.LogManager.addAppender(new aul.ConsoleAppender());
-    auf.LogManager.setLevel(auf.LogManager.levels.debug);
+    auf.LogManager.setLevel(4 /* debug */);
     // bootstrap Aurelia
     function configure(aurelia) {
         "use strict";

@@ -27,7 +27,27 @@ define(["require", "exports", "aurelia-framework", "aurelia-event-aggregator"], 
     exports.AppInsightsLogAppender = AppInsightsLogAppender;
     var AureliaAppInsights = (function () {
         function AureliaAppInsights(eventAgg) {
+            var _this = this;
             this.eventAgg = eventAgg;
+            this._key = null;
+            this.navCompleted = function (instruction) {
+                try {
+                    _this.guardKey();
+                    appInsights.trackPageView(instruction.fragment, window.location.href);
+                }
+                catch (e) {
+                    console.debug("Error sending AI trackPageView: " + e.message);
+                }
+            };
+            this.navError = function (navError) {
+                try {
+                    _this.guardKey();
+                    appInsights.trackException(navError.result.output);
+                }
+                catch (e) {
+                    console.debug("Error sending AI trackException");
+                }
+            };
             this.subscribeToNavEvents();
             this.addLogAppender();
         }
@@ -47,45 +67,15 @@ define(["require", "exports", "aurelia-framework", "aurelia-event-aggregator"], 
             configurable: true
         });
         AureliaAppInsights.prototype.subscribeToNavEvents = function () {
-            this.eventAgg.subscribe("router:navigation:processing", this.navCompleted);
+            this.eventAgg.subscribe("router:navigation:complete", this.navCompleted);
             this.eventAgg.subscribe("router:navigation:error", this.navError);
-        };
-        AureliaAppInsights.prototype.navCompleted = function (instruction) {
-            try {
-                this.guardKey();
-                appInsights.trackPageView(instruction.fragment, window.location.href);
-            }
-            catch (e) {
-                console.debug("Error sending AI trackPageView");
-            }
-        };
-        AureliaAppInsights.prototype.navError = function (navError) {
-            try {
-                this.guardKey();
-                var err;
-                if (typeof navError.result.output !== "Error") {
-                    try {
-                        throw (navError.result);
-                    }
-                    catch (e) {
-                        err = e;
-                    }
-                }
-                else {
-                    err = navError.result.output;
-                }
-                appInsights.trackException(err);
-            }
-            catch (e) {
-                console.debug("Error sending AI trackException");
-            }
         };
         AureliaAppInsights.prototype.addLogAppender = function () {
             auf.LogManager.addAppender(new AppInsightsLogAppender());
         };
         AureliaAppInsights.prototype.guardKey = function () {
-            if (this._key === undefined) {
-                throw "AppInsights key has not been set. Use `AureliaAppInsights.key = aiKey;` to set it.";
+            if (this._key === null) {
+                throw "AppInsights key has not been set. Use 'AureliaAppInsights.key = aiKey;' to set it.";
             }
         };
         AureliaAppInsights.inject = [aue.EventAggregator];

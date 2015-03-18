@@ -166,7 +166,7 @@ declare module "aurelia-router" {
 	interface INavigationResult {
 		status: string;
 		context: INavigationContext;
-		output: string | Error;
+		output: Error;
 		completed: boolean;
 	}
 

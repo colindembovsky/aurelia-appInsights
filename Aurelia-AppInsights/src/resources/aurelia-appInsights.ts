@@ -31,7 +31,7 @@ export class AppInsightsLogAppender implements auf.LogAppender {
 
 export class AureliaAppInsights {
 	static inject = [aue.EventAggregator];
-	private _key: string;
+	private _key: string = null;
 
 	public set key(aiKey: string) {
 		this._key = aiKey;
@@ -48,33 +48,23 @@ export class AureliaAppInsights {
 	}
 
 	subscribeToNavEvents() {
-		this.eventAgg.subscribe("router:navigation:processing", this.navCompleted);
+		this.eventAgg.subscribe("router:navigation:complete", this.navCompleted);
 		this.eventAgg.subscribe("router:navigation:error", this.navError);
 	}
 
-	navCompleted(instruction: aur.INavigationInstruction) {
+	navCompleted = (instruction: aur.INavigationInstruction) => {
 		try {
 			this.guardKey();
 			appInsights.trackPageView(instruction.fragment, window.location.href);
 		} catch (e) {
-			console.debug("Error sending AI trackPageView");
+			console.debug("Error sending AI trackPageView: " + e.message);
 		}
 	}
 
-	navError(navError: aur.INavigationError) {
+	navError = (navError: aur.INavigationError) => {
 		try {
 			this.guardKey();
-			var err: Error;
-			if (typeof navError.result.output !== "Error") {
-				try {
-					throw (navError.result);
-				} catch (e) {
-					err = e;
-				}
-			} else {
-				err = <Error>navError.result.output;
-			}
-			appInsights.trackException(err);
+			appInsights.trackException(navError.result.output);
 		} catch (e) {
 			console.debug("Error sending AI trackException");
 		}
@@ -85,8 +75,8 @@ export class AureliaAppInsights {
 	}
 
 	guardKey() {
-		if (this._key === undefined) {
-			throw "AppInsights key has not been set. Use `AureliaAppInsights.key = aiKey;` to set it.";
+		if (this._key === null) {
+			throw "AppInsights key has not been set. Use 'AureliaAppInsights.key = aiKey;' to set it.";
 		}
 	}
 }

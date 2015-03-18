@@ -31,40 +31,103 @@ define(["require", "exports", "aurelia-router", "aurelia-event-aggregator", "res
         };
         return RouterStub;
     })(aur.Router);
-    var EventAggregatorStub = (function (_super) {
-        __extends(EventAggregatorStub, _super);
-        function EventAggregatorStub() {
-            _super.apply(this, arguments);
+    // fake appInsights
+    var aiPages = [];
+    var aiErrors = [];
+    appInsights = {
+        config: {
+            enableDebug: false,
+            instrumentationKey: null
+        },
+        trackPageView: function (page, url) {
+            aiPages.push(page);
+        },
+        trackEvent: function (evt) {
+        },
+        trackMetric: function (evt) {
+        },
+        trackTrace: function (message) {
+        },
+        trackException: function (error) {
+            aiErrors.push(error);
+        },
+        startTrackEvent: function (eventName) {
+        },
+        stopTrackEvent: function (eventName) {
         }
-        EventAggregatorStub.prototype.publish = function (event, data) {
-        };
-        EventAggregatorStub.prototype.subscribe = function (event, callback) {
-        };
-        return EventAggregatorStub;
-    })(aue.EventAggregator);
+    };
     describe("the AppInsights plugin", function () {
         var sut;
+        var eventAgg;
         beforeEach(function () {
-            sut = new EventAggregatorStub();
+            aiPages = [];
+            aiErrors = [];
+            eventAgg = new aue.EventAggregator();
         });
         it("can be instantiated", function () {
+            sut = new aai.AureliaAppInsights(eventAgg);
             expect(sut).toBeDefined();
+        });
+        it("subscribes to router events", function () {
+            expect(eventAgg.eventLookup["router:navigation:complete"]).toBeUndefined();
+            expect(eventAgg.eventLookup["router:navigation:error"]).toBeUndefined();
+            sut = new aai.AureliaAppInsights(eventAgg);
+            expect(eventAgg.eventLookup["router:navigation:complete"]).toBeDefined();
+            expect(eventAgg.eventLookup["router:navigation:complete"].length).toEqual(1);
+            expect(eventAgg.eventLookup["router:navigation:error"]).toBeDefined();
+            expect(eventAgg.eventLookup["router:navigation:error"].length).toEqual(1);
         });
         it("can set the AI key", function () {
             sut.key = "123";
             expect(appInsights.config.instrumentationKey).toBe("123");
         });
-    });
-    describe("the AppInsights plugin when used", function () {
-        var sut;
-        var eventAgg;
-        beforeEach(function () {
-            eventAgg = new EventAggregatorStub();
+        it("can set debug", function () {
+            sut.debug = false;
+            expect(appInsights.config.enableDebug).toBeFalsy();
+            sut.debug = true;
+            expect(appInsights.config.enableDebug).toBeTruthy();
+        });
+        it("handles router events with no key", function () {
             sut = new aai.AureliaAppInsights(eventAgg);
             sut.key = "123";
+            eventAgg.publish("router:navigation:complete", {
+                fragment: "page1"
+            });
+            // we should still get here successfully
         });
-        it("can be instantiated", function () {
-            expect(sut).toBeDefined();
+        it("receives router events", function () {
+            sut = new aai.AureliaAppInsights(eventAgg);
+            sut.key = "123";
+            expect(aiPages.length).toEqual(0);
+            expect(aiErrors.length).toEqual(0);
+            eventAgg.publish("router:navigation:complete", {
+                fragment: "page1"
+            });
+            expect(aiPages.length).toEqual(1);
+            expect(aiErrors.length).toEqual(0);
+        });
+        it("handles router errors", function () {
+            sut = new aai.AureliaAppInsights(eventAgg);
+            sut.key = "123";
+            expect(aiPages.length).toEqual(0);
+            expect(aiErrors.length).toEqual(0);
+            var err;
+            try {
+                throw "some error";
+            }
+            catch (e) {
+                err = e;
+            }
+            eventAgg.publish("router:navigation:error", {
+                instruction: {
+                    fragment: "page1"
+                },
+                result: {
+                    output: err
+                }
+            });
+            expect(aiPages.length).toEqual(0);
+            expect(aiErrors.length).toEqual(1);
         });
     });
 });
