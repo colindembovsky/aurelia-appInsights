@@ -69,10 +69,8 @@ export class AureliaAppInsights {
 
 	navCompleted = (instruction: aur.INavigationInstruction) => {
 		try {
-			console.log("-- in nav complete");
 			this.guardKey();
 			appInsights.trackPageView(instruction.fragment, window.location.href, this._properties);
-			console.log("Tracked AI nav completion event");
 		} catch (e) {
 			console.debug("Error sending AI trackPageView: %O", e);
 		}
@@ -80,10 +78,8 @@ export class AureliaAppInsights {
 
 	navError = (navError: aur.INavigationError) => {
 		try {
-			console.log("-- in nav err");
 			this.guardKey();
 			appInsights.trackException(navError.result.output);
-			console.log("Tracked AI nav error event");
 		} catch (e) {
 			console.debug("Error sending AI trackPageView: %O", e);
 		}
