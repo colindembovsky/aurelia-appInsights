@@ -3,8 +3,7 @@ define(["require", "exports", "aurelia-framework", "aurelia-event-aggregator"], 
         // add the log appender to add tracing
         auf.LogManager.addAppender(new AppInsightsLogAppender());
         // bootstrap the ai plugin
-        var eventAggregator = aurelia.container.get(aue.EventAggregator);
-        aurelia.container.registerInstance(AureliaAppInsights, new AureliaAppInsights(eventAggregator));
+        aurelia.container.registerSingleton(AureliaAppInsights, AureliaAppInsights);
     }
     exports.install = install;
     var AppInsightsLogAppender = (function () {

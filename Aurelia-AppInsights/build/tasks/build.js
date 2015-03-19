@@ -15,7 +15,7 @@ gulp.task('build-system', function () {
         .pipe(changed(paths.source, { extension: '.ts' }))
         .pipe(sourcemaps.init())
         .pipe(typescript(typeScriptOptions))
-        .pipe(sourcemaps.write(".", { includeContent: false, sourceRoot: "/src" }))
+        .pipe(sourcemaps.write(".", { includeContent: false, sourceRoot: "/src/" }))
         .pipe(gulp.dest(paths.output));
 });
 

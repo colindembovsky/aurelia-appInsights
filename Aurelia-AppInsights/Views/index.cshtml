@@ -27,21 +27,28 @@
             <div class="message">Welcome to Aurelia AppInsights Demo</div>
             <i class="fa fa-spinner fa-spin"></i>
         </div>
-        <script src="jspm_packages/system.js"></script>
-        <script src="config.js"></script>
 
-        <!-- jquery, bootstrap and jquery ui layout scripts -->
-        <script src="Content/scripts/jquery-2.1.3.js"></script>
-        <script src="jspm_packages/github/twbs/bootstrap@3.3.2/js/bootstrap.min.js"></script>
-        <script src="Content/scripts/jquery-ui-1.11.3.js"></script>
-
+        <script src="Content/scripts/core-js/client/core.js"></script>
+        <script src="Content/scripts/requirejs/require.js"></script>
         <script>
             @if (ViewBag.IsDebug) {
                 @Html.Raw("appInsights.config.debug = true;");
             }
 
-            // start aurelia
-            System.import('aurelia-bootstrapper').catch(console.error.bind(console));
+            var baseUrl = window.location.origin
+            console.debug("baseUrl: " + baseUrl);
+            require.config({
+                baseUrl: baseUrl + "/dist",
+                paths: {
+                    aurelia: baseUrl + "/Content/scripts/aurelia",
+                    webcomponentsjs: baseUrl + "/Content/scripts/webcomponentsjs",
+                    dist: baseUrl + "/dist",
+                    views: baseUrl + "/dist/views",
+                    resources: baseUrl + "/dist/resources",
+                }
+            });
+
+            require(['aurelia/aurelia-bundle-latest']);
         </script>
     </body>
 

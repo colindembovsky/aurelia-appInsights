@@ -3,8 +3,7 @@ define(["require", "exports", "aurelia-framework", "aurelia-event-aggregator"], 
         // add the log appender to add tracing
         auf.LogManager.addAppender(new AppInsightsLogAppender());
         // bootstrap the ai plugin
-        var eventAggregator = aurelia.container.get(aue.EventAggregator);
-        aurelia.container.registerInstance(AureliaAppInsights, new AureliaAppInsights(eventAggregator));
+        aurelia.container.registerSingleton(AureliaAppInsights, AureliaAppInsights);
     }
     exports.install = install;
     var AppInsightsLogAppender = (function () {
@@ -33,10 +32,8 @@ define(["require", "exports", "aurelia-framework", "aurelia-event-aggregator"], 
             this._properties = {};
             this.navCompleted = function (instruction) {
                 try {
-                    console.log("-- in nav complete");
                     _this.guardKey();
                     appInsights.trackPageView(instruction.fragment, window.location.href, _this._properties);
-                    console.log("Tracked AI nav completion event");
                 }
                 catch (e) {
                     console.debug("Error sending AI trackPageView: %O", e);
@@ -44,10 +41,8 @@ define(["require", "exports", "aurelia-framework", "aurelia-event-aggregator"], 
             };
             this.navError = function (navError) {
                 try {
-                    console.log("-- in nav err");
                     _this.guardKey();
                     appInsights.trackException(navError.result.output);
-                    console.log("Tracked AI nav error event");
                 }
                 catch (e) {
                     console.debug("Error sending AI trackPageView: %O", e);

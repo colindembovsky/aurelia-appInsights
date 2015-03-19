@@ -7,8 +7,7 @@ export function install(aurelia: auf.Aurelia) {
 	auf.LogManager.addAppender(new AppInsightsLogAppender());
 
 	// bootstrap the ai plugin
-	var eventAggregator = aurelia.container.get<aue.EventAggregator>(aue.EventAggregator);
-	aurelia.container.registerInstance(AureliaAppInsights, new AureliaAppInsights(eventAggregator));
+	aurelia.container.registerSingleton(AureliaAppInsights, AureliaAppInsights);
 }
 
 export class AppInsightsLogAppender implements auf.LogAppender {
