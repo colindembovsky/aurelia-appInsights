@@ -62,7 +62,7 @@ declare module "aurelia-router" {
         title?: string;
         settings?: any;
     }
-	
+
 	interface INavigationInstruction {
 		filter: (func: (route: IRouterStep) => boolean) => Array<IRouterStep>;
 		fragment: string;
@@ -83,7 +83,7 @@ declare module "aurelia-router" {
 	}
 
 	interface IRouterStep {
-		run: (routerContext: INavigationContext, next: any) => boolean | INavigationCommand; 
+		run: (routerContext: INavigationContext, next: any) => boolean | INavigationCommand;
 		cancel?: (message: string) => void;
 		config?: any;
 	}
@@ -166,7 +166,7 @@ declare module "aurelia-router" {
 	interface INavigationResult {
 		status: string;
 		context: INavigationContext;
-		output: Error;
+		output: string | Error;
 		completed: boolean;
 	}
 
@@ -231,21 +231,42 @@ declare module "aurelia-http-client" {
 		clear: () => void;
 	}
 
+	// TODO: add type for params, credentials, reviver, replacer
+	interface IHttpClientConfig {
+		withHeader(header: string, value: string): void;
+		withBaseUrl(url: string);
+		withParams(params: any);
+		withResponseType(rType: string);
+		withTimeout(t: number);
+		withCredentials(cred: any);
+		withReviver(reviver: any);
+		withReplacer(replacer: any);
+		withProgressCallback(cb: Function);
+		withCallbackParameterName(name: string);
+	}
+
     class HttpClient {
-		defaultRequestHeaders: HttpHeaders;
-		constructor(baseUrl?: string, defaultRequestHeaders?: HttpHeaders)
         jsonp(url: string): IPromise<IJsonpResponse>;
 		get(uri: string): IPromise<any>;
 		put(uri: string, content: any, replacer: any): IPromise<any>;
 		patch(uri: string, content: any, replacer?: any): IPromise<any>;
 		post(uri: string, content: any, replacer?: any): IPromise<any>;
 		delete(uri: string): IPromise<any>;
+
+		configure: (callback: (cfg: IHttpClientConfig) => void) => HttpClient;
     }
 }
 
 interface AuAppender { }
-
 declare module "aurelia-framework" {
+	interface IObserver {
+		subscribe(callback: Function): void;
+	}
+
+	class ObserverLocator {
+		getObserver(object: any, propertyName: string): IObserver;
+	}
+
 	interface LogAppender extends AuAppender {
 		debug(logger: Logger, message: string, ...rest);
 		info(logger: Logger, message: string, ...rest);
@@ -304,7 +325,7 @@ declare module "aurelia-framework" {
 		defaultResources: () => Aurelia;
 		router: () => Aurelia;
 		eventAggregator: () => Aurelia;
-		plugin:(path: string) => Aurelia;
+		plugin: (path: string) => Aurelia;
 		withResources(...args): void;
     }
 
