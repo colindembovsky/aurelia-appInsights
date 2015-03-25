@@ -3,7 +3,7 @@ module.exports = function (config) {
     config.set({
         basePath: "",
 
-        frameworks: ["jspm", "jasmine"],
+        frameworks: ["jspm", "jasmine", "sinon"],
 
         jspm: {
             loadFiles: ['test/unit/**/*.js', 'dist/**/*.js']
@@ -11,6 +11,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
+            "node_modules/jasmine-sinon/lib/jasmine-sinon.js",
             // this is just here for the VS Karma adapter
             { pattern: 'test/unit/**/*.js', included: false }
         ],

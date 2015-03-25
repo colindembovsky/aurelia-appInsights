@@ -1,86 +1,45 @@
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-define(["require", "exports", "aurelia-router", "aurelia-event-aggregator", "resources/aurelia-appInsights"], function (require, exports, aur, aue, aai) {
-    var RouterStub = (function (_super) {
-        __extends(RouterStub, _super);
-        function RouterStub() {
-            _super.apply(this, arguments);
-        }
-        RouterStub.prototype.configure = function (callback) {
-            var _this = this;
-            var config = {
-                title: "",
-                moduleId: "xyz",
-                map: function (routeArray) {
-                    _this.routes = routeArray;
-                },
-                mapUnknownRoutes: function (any) {
-                },
-                addPipelineStep: function (name, step) {
-                    this.pipelineSteps.push({ name: name, step: step });
-                },
-                pipelineSteps: []
-            };
-            callback(config);
-            this.config = config;
-            this.title = config.title;
-        };
-        return RouterStub;
-    })(aur.Router);
-    // fake appInsights
-    var aiPages = [];
-    var aiErrors = [];
-    appInsights = {
-        config: {
+define(["require", "exports", "aurelia-event-aggregator", "resources/aurelia-appInsights"], function (require, exports, aue, aai) {
+    function stubAppInsights() {
+        appInsights = sinon.stub({
+            trackPageView: function () {
+            },
+            trackException: function () {
+            }
+        });
+        appInsights.config = {
             enableDebug: false,
             instrumentationKey: null
-        },
-        trackPageView: function (page, url) {
-            aiPages.push(page);
-        },
-        trackEvent: function (evt) {
-        },
-        trackMetric: function (evt) {
-        },
-        trackTrace: function (message) {
-        },
-        trackException: function (error) {
-            aiErrors.push(error);
-        },
-        startTrackEvent: function (eventName) {
-        },
-        stopTrackEvent: function (eventName) {
-        }
-    };
+        };
+    }
     describe("the AppInsights plugin", function () {
         var sut;
+        var sandbox;
+        var eventAggPublishSpy;
+        var eventAggSubscribeSpy;
         var eventAgg;
+        var aiStub;
         beforeEach(function () {
-            aiPages = [];
-            aiErrors = [];
+            stubAppInsights();
             eventAgg = new aue.EventAggregator();
+            eventAggPublishSpy = sinon.spy(eventAgg, "publish");
+            eventAggSubscribeSpy = sinon.spy(eventAgg, "subscribe");
         });
         it("can be instantiated", function () {
             sut = new aai.AureliaAppInsights(eventAgg);
             expect(sut).toBeDefined();
         });
         it("subscribes to router events", function () {
-            expect(eventAgg.eventLookup["router:navigation:complete"]).toBeUndefined();
-            expect(eventAgg.eventLookup["router:navigation:error"]).toBeUndefined();
+            sinon.assert.notCalled(eventAggPublishSpy);
+            sinon.assert.notCalled(eventAggSubscribeSpy);
             sut = new aai.AureliaAppInsights(eventAgg);
-            expect(eventAgg.eventLookup["router:navigation:complete"]).toBeDefined();
-            expect(eventAgg.eventLookup["router:navigation:complete"].length).toEqual(1);
-            expect(eventAgg.eventLookup["router:navigation:error"]).toBeDefined();
-            expect(eventAgg.eventLookup["router:navigation:error"].length).toEqual(1);
+            sinon.assert.calledTwice(eventAggSubscribeSpy);
+            sinon.assert.calledWith(eventAggSubscribeSpy, "router:navigation:complete");
+            sinon.assert.calledWith(eventAggSubscribeSpy, "router:navigation:error");
         });
-        it("can set the AI key", function () {
+        it("can set the AI key", sinon.test(function () {
             sut.key = "123";
             expect(appInsights.config.instrumentationKey).toBe("123");
-        });
+        }));
         it("can set debug", function () {
             sut.debug = false;
             expect(appInsights.config.enableDebug).toBeFalsy();
@@ -93,24 +52,25 @@ define(["require", "exports", "aurelia-router", "aurelia-event-aggregator", "res
             eventAgg.publish("router:navigation:complete", {
                 fragment: "page1"
             });
-            // we should still get here successfully
+            // we should still get here successfully, and trackPageView should not have been called
+            expect(appInsights.trackPageView.calledOnce).toBeTruthy();
         });
         it("receives router events", function () {
             sut = new aai.AureliaAppInsights(eventAgg);
             sut.key = "123";
-            expect(aiPages.length).toEqual(0);
-            expect(aiErrors.length).toEqual(0);
+            sinon.assert.notCalled(eventAggPublishSpy);
+            sinon.assert.calledTwice(eventAggSubscribeSpy);
             eventAgg.publish("router:navigation:complete", {
                 fragment: "page1"
             });
-            expect(aiPages.length).toEqual(1);
-            expect(aiErrors.length).toEqual(0);
+            expect(appInsights.trackPageView).toHaveBeenCalledWith("page1");
+            expect(appInsights.trackException).not.toHaveBeenCalled();
         });
         it("handles router errors", function () {
             sut = new aai.AureliaAppInsights(eventAgg);
             sut.key = "123";
-            expect(aiPages.length).toEqual(0);
-            expect(aiErrors.length).toEqual(0);
+            sinon.assert.notCalled(eventAggPublishSpy);
+            sinon.assert.calledTwice(eventAggSubscribeSpy);
             var err;
             try {
                 throw "some error";
@@ -126,8 +86,8 @@ define(["require", "exports", "aurelia-router", "aurelia-event-aggregator", "res
                     output: err
                 }
             });
-            expect(aiPages.length).toEqual(0);
-            expect(aiErrors.length).toEqual(1);
+            expect(appInsights.trackException).toHaveBeenCalledWith(err);
+            expect(appInsights.trackPageView).not.toHaveBeenCalled();
         });
     });
 });
