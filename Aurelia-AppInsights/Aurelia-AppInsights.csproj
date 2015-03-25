@@ -203,6 +203,7 @@
     <Content Include="Content\styles\styles.css" />
     <Content Include="gulpfile.js" />
     <Content Include="karma.conf.js" />
+    <Content Include="test\sinon-1.9.1.js" />
     <Content Include="src\app.html" />
     <Content Include="src\views\child-router.html" />
     <Content Include="src\views\flickr.html" />
@@ -256,6 +257,8 @@
     <TypeScriptCompile Include="Scripts\typings\appInsights\appInsights.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jasmine\jasmine.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\lib.es6\lib.es6.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\sinon\sinon.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\sinon\sinon.jamine.d.ts" />
     <TypeScriptCompile Include="src\app.ts" />
     <TypeScriptCompile Include="src\main.ts" />
     <TypeScriptCompile Include="src\views\child-router.ts" />
