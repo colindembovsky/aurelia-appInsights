@@ -51,6 +51,27 @@ declare module "aurelia-dependency-injection" {
     }
 }
 
+declare module "aurelia-templating" {
+    class ResourcePool { }
+    class ViewCompiler {
+        compile(templateOrFragment: HTMLElement | DocumentFragment, viewResources: ViewResources, options?: Object): ViewFactory;
+    }
+    class ViewFactory {
+        create(container, executionContext, options?): View;
+    }
+    class ViewResources {
+        public viewUrl: string;
+    }
+    class ViewSlot {
+        add(view: View);
+        remove(view: View);
+    }
+    class View {
+        bind(context);
+        unbind();
+    }
+}
+
 declare module "aurelia-router" {
     import aureliadependencyinjection = require("aurelia-dependency-injection");
     import aureliahistory = require("aurelia-history");
@@ -95,6 +116,7 @@ declare module "aurelia-router" {
 		mapUnknownRoutes: (any) => void;
 		addPipelineStep: (name: string, step: any) => void;
 		auth?: boolean | string[];
+		pipelineSteps: any[];
     }
 
     interface IRouterNavigationRouteConfig extends IRouterConfig {
@@ -134,6 +156,7 @@ declare module "aurelia-router" {
         addRoute(config: IRoute);
         reset();
 		routes: IRoute[];
+		config: IRouterConfig;
     }
 
     interface INavigationCommand {
@@ -174,6 +197,16 @@ declare module "aurelia-router" {
 		instruction: INavigationInstruction;
 		result: INavigationResult;
 	}
+
+    class NavigationContext {
+        plan: {
+            default: {
+                config: { moduleId: string }
+            }
+        }
+        router: Router;
+        nextInstructions(): Array<INavigationInstruction>;
+    }
 }
 
 declare module "aurelia-history" {
@@ -215,6 +248,16 @@ declare module "aurelia-http-client" {
         content: IJsonpContent;
     }
 
+	interface IHttpRequestMessage<T> {
+		baseUrl: string;
+		method: string;
+		content: T;
+		fullUri: string;
+		headers: HttpHeaders;
+		responseType: string;
+		uri: string;
+	}
+
 	interface IHttpResponseMessage<T> {
 		headers: HttpHeaders;
 		isSuccess: boolean;
@@ -223,6 +266,7 @@ declare module "aurelia-http-client" {
 		statusCode: number;
 		statusText: string;
 		content: T;
+		requestMessage: IHttpRequestMessage<any>;
 	}
 
 	class HttpHeaders {
@@ -257,8 +301,43 @@ declare module "aurelia-http-client" {
     }
 }
 
+declare module "aurelia-logging" {
+
+    interface Logger {
+        id: string;
+        debug(message: string): void;
+        info(message: string): void;
+        warn(message: string): void;
+        error(message: string): void;
+    }
+
+    const enum levels {
+        none = 0,
+        error = 1,
+        warn = 2,
+        info = 3,
+        debug = 4
+    }
+
+    function setLevel(level: levels): void;
+    function addAppender(appender: Appender): void;
+
+    interface Appender { }
+
+    class ConsoleAppender implements Appender { }
+
+    function getLogger(id: string): Logger;
+}
+
 interface AuAppender { }
+
 declare module "aurelia-framework" {
+
+	import Logging = require('aurelia-logging');
+    type Logger = Logging.Logger;
+
+    var LogManager: typeof Logging;
+
 	interface IObserver {
 		subscribe(callback: Function): void;
 	}
@@ -290,6 +369,7 @@ declare module "aurelia-framework" {
         static useView(path: string): Behavior;
         static noView(): Behavior;
         static transient(): Behavior;
+        static skipContentProcessing(): Behavior;
 
         withProperty(propertyName: string, changeHandler?: string, defaultVale?: string): Behavior;
         withOptions(attribute?: string): Behavior;
@@ -303,20 +383,48 @@ declare module "aurelia-framework" {
         noView(): Behavior;
         transient(): Behavior;
 		and(configurer: (config: AttributeConfig) => void): Behavior;
+        skipContentProcessing(): Behavior;
+    }
+
+	class ResourcePool { }
+    class ViewCompiler {
+        compile(templateOrFragment: HTMLElement | DocumentFragment, viewResources: ViewResources, options?: Object): ViewFactory;
+    }
+    class ViewFactory {
+        create(container, executionContext, options?): View;
+    }
+    class ViewResources {
+        public viewUrl: string;
+    }
+    class ViewSlot {
+        add(view: View);
+        remove(view: View);
+    }
+    class View {
+        bind(context);
+        unbind();
     }
 
     interface Loader { }
-    interface AureliaPlugins {
-        installBindingLanguage: () => AureliaPlugins;
-        installResources: () => AureliaPlugins;
-        installRouter: () => AureliaPlugins;
-        installEventAggregator: () => AureliaPlugins;
+    interface Plugins {
+        plugin(moduleID: string, config?: any): Plugins
+        es5(): Plugins
+        atscript(): Plugins
+        standardConfiguration(): Plugins
+        developmentLogging(): Plugins
+        eventAggregator(): Plugins
+        defaultResources(): Plugins
+        router(): Plugins
+        defaultBindingLanguage(): Plugins
     }
+
+    interface ResourceRegistry { }
+
     class Aurelia {
-        constructor(loader?: Loader);
-        plugins: AureliaPlugins;
+        constructor(loader?: Loader, container?: Container, resource?: ResourceRegistry);
+        plugins: Plugins;
         start(): Promise<Aurelia>;
-        setRoot(appModuleId: string, appHost: any): any;
+        setRoot(appModuleId: string, appHost: string | HTMLElement): Promise<Aurelia>;
         started: boolean;
 		container: Container;
 
@@ -327,27 +435,6 @@ declare module "aurelia-framework" {
 		eventAggregator: () => Aurelia;
 		plugin: (path: string) => Aurelia;
 		withResources(...args): void;
-    }
-
-    module LogManager {
-        function getLogger(id: string): Logger;
-        enum levels {
-            none = 0,
-            error = 1,
-            warn = 2,
-            info = 3,
-            debug = 4
-        }
-        function setLevel(level: levels): void;
-        function addAppender(appender: AuAppender): void;
-    }
-
-    class Logger {
-		id: string;
-        debug(message: string): void;
-        info(message: string): void;
-        warn(message: string): void;
-        error(message: string): void;
     }
 
     interface HandlerCallback {
@@ -392,27 +479,6 @@ declare module "aurelia-framework" {
         get: (container: Container) => () => any;
         static of: (key: any) => Parent;
     }
-}
-
-declare module "aurelia-logging" {
-    module LogManager {
-        function getLogger(id: string): Logger;
-        enum levels {
-            none = 0,
-            error = 1,
-            warn = 2,
-            info = 3,
-            debug = 4
-        }
-        function setLevel(level: levels): void;
-        function addAppender(appender: Appender): void;
-    }
-
-    interface Appender { }
-
-    class ConsoleAppender implements Appender { }
-
-    class Logger { }
 }
 
 declare module "aurelia-metadata" {
