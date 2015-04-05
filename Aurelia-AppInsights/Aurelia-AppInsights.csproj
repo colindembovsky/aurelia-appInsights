@@ -272,6 +272,7 @@
     <TypeScriptCompile Include="Scripts\typings\jqueryui\jqueryui.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="test\unit\modules.d.ts" />
+    <TypeScriptCompile Include="test\unit\testUtils.spec.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dist\" />
