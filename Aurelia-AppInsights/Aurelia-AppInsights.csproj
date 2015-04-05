@@ -170,7 +170,6 @@
     <Content Include="build\tasks\serve.js" />
     <Content Include="build\tasks\watch.js" />
     <Content Include="config.js" />
-    <Content Include="Content\scripts\aurelia\aurelia-bundle-latest.js" />
     <Content Include="Content\scripts\aurelia\aurelia-bundle.js" />
     <Content Include="Content\scripts\aurelia\aurelia-bundle.min.js" />
     <Content Include="Content\scripts\core-js\.gitattributes" />
@@ -203,6 +202,7 @@
     <Content Include="Content\styles\styles.css" />
     <Content Include="gulpfile.js" />
     <Content Include="karma.conf.js" />
+    <Content Include="test-main.js" />
     <Content Include="test\sinon-1.9.1.js" />
     <Content Include="src\app.html" />
     <Content Include="src\views\child-router.html" />

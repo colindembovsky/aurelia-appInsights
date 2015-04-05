@@ -3,17 +3,22 @@ module.exports = function (config) {
     config.set({
         basePath: "",
 
-        frameworks: ["jspm", "jasmine", "sinon"],
-
-        jspm: {
-            loadFiles: ['test/unit/**/*.js', 'dist/**/*.js']
-        },
+        frameworks: ["jasmine", "requirejs", "sinon"],
 
         // list of files / patterns to load in the browser
         files: [
+            // test specific files
+            "test-main.js",
             "node_modules/jasmine-sinon/lib/jasmine-sinon.js",
-            // this is just here for the VS Karma adapter
-            { pattern: 'test/unit/**/*.js', included: false }
+
+            // source files
+            { pattern: "src/**/*.js", included: false },
+
+            // test files
+            { pattern: 'test/unit/**/*.js', included: false },
+
+            // framework and lib files
+            { pattern: "Content/scripts/**/*.js", included: false },
         ],
 
         // list of files to exclude
@@ -30,7 +35,7 @@ module.exports = function (config) {
         colors: true,
 
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_ERROR,
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,

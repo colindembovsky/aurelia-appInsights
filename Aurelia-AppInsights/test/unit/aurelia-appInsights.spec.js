@@ -89,6 +89,9 @@ define(["require", "exports", "aurelia-event-aggregator", "resources/aurelia-app
             expect(appInsights.trackException).toHaveBeenCalledWith(err);
             expect(appInsights.trackPageView).not.toHaveBeenCalled();
         });
+        it("should pass!", function () {
+            expect(sut).toBeDefined();
+        });
     });
 });
 //# sourceMappingURL=aurelia-appInsights.spec.js.map
