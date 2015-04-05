@@ -2,14 +2,14 @@
 var allSourceFiles = [];
 
 var TEST_REGEXP = /(spec|test)\.js$/i;
-var SRC_REGEXP = /src\/[a-zA-Z]+\/[a-zA-Z]+.js$/im;
+var SRC_REGEXP = /dist\/[a-zA-Z]+\/[a-zA-Z]+.js$/im;
 
 var normalizePathToSpecFiles = function (path) {
     return path.replace(/^\/base\//, '').replace(/\.js$/, '');
 };
 
 var normalizePathToSourceFiles = function (path) {
-    return path.replace(/^\/base\/src\//, '').replace(/\.js$/, '');
+    return path.replace(/^\/base\/dist\//, '').replace(/\.js$/, '');
 };
 
 var loadSourceModulesAndStartTest = function () {
@@ -36,9 +36,9 @@ require.config({
 
     paths: {
         test: "/base/test",
-        src: "/base/src",
-        views: "/base/src/views",
-        resources: "/base/src/resources",
+        dist: "/base/dist",
+        views: "/base/dist/views",
+        resources: "/base/dist/resources",
         aurelia: "/base/Content/scripts/aurelia",
     },
 

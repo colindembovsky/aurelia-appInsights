@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jasmine Spec Runner v2.2.0</title>
+
+    <link rel="stylesheet" href="../../node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+    <script src="/Content/scripts/jquery-2.1.3.js"></script>
+    
+    <!-- source files here... -->
+    <script src="/Content/scripts/core-js/client/core.js"></script>
+    <script src="/Content/scripts/requirejs/require.js"></script>
+    
+    <script>
+        var baseUrl = window.location.origin;
+        require.config({
+            baseUrl: baseUrl + "/src",
+            paths: {
+                jasmine: baseUrl + "/node_modules/jasmine-core/lib/jasmine-core/jasmine",
+                "jasmine-html": baseUrl + "/node_modules/jasmine-core/lib/jasmine-core/jasmine-html",
+                "jasmine-boot": baseUrl + "/node_modules/jasmine-core/lib/jasmine-core/boot",
+                "sinon": baseUrl + "/node_modules/sinon/pkg/sinon",
+                "jasmine-sinon": baseUrl + "/node_modules/jasmine-sinon/lib/jasmine-sinon",
+                aurelia: baseUrl + "/Content/scripts/aurelia",
+                webcomponentsjs: baseUrl + "/Content/scripts/webcomponentsjs",
+                dist: baseUrl + "/dist",
+                views: baseUrl + "/dist/views",
+                resources: baseUrl + "/dist/resources",
+                test: "/test"
+            },
+            shim: {
+                "jasmine-html": {
+                    deps: ["jasmine"],
+                },
+                "jasmine-boot": {
+                    deps: ["jasmine", "jasmine-html"]
+                }
+            }
+        });
+
+        // load Aurelia and jasmine...
+        require(["aurelia/aurelia-bundle"], function() {
+            // ... then jasmine...
+            require(["jasmine-boot"], function () {
+                // .. then jasmine plugins...
+                require(["sinon", "jasmine-sinon"], function () {
+                    // build a list of specs
+                    var specs = [];
+                    specs.push("test/unit/aurelia-appInsights.spec");
+
+                    // ... then load the specs
+                    require(specs, function () {
+                        // finally we can run jasmine
+                        window.onload();
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+</body>
+</html>

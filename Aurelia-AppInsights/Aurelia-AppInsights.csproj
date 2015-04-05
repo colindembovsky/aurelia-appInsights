@@ -231,6 +231,7 @@
     <None Include="Views\index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="test\unit\SpecRunner.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

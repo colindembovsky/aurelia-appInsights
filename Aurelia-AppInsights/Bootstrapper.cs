@@ -16,13 +16,16 @@ namespace Nwc.Web
 
 			// serve static content outside the default /Content folder (for Aurelia)
 			nancyConventions.StaticContentsConventions.Add(
-				StaticContentConventionBuilder.AddDirectory("jspm_packages", @"jspm_packages"));
-
-			nancyConventions.StaticContentsConventions.Add(
 				StaticContentConventionBuilder.AddDirectory("dist", @"dist"));
 
 			nancyConventions.StaticContentsConventions.Add(
 				StaticContentConventionBuilder.AddDirectory("Views", @"Views"));
+
+			nancyConventions.StaticContentsConventions.Add(
+				StaticContentConventionBuilder.AddDirectory("test", @"test"));
+
+			nancyConventions.StaticContentsConventions.Add(
+				StaticContentConventionBuilder.AddDirectory("node_modules", @"node_modules"));
 
 			nancyConventions.StaticContentsConventions.Add(
 				StaticContentConventionBuilder.AddFile("/config.js", @"config.js"));

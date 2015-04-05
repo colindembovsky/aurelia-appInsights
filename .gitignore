@@ -194,3 +194,6 @@ Aurelia-AppInsights/packages
 Aurelia-AppInsights/jspm_packages
 packages
 Aurelia-AppInsights/**/*.js.map
+
+# coverage results
+coverage/

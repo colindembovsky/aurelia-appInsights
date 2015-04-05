@@ -113,8 +113,4 @@ describe("the AppInsights plugin",() => {
 		expect(appInsights.trackException).toHaveBeenCalledWith(err);
 		expect(appInsights.trackPageView).not.toHaveBeenCalled();
 	});
-
-	it("should pass!", function () {
-		expect(sut).toBeDefined();
-	});
 });

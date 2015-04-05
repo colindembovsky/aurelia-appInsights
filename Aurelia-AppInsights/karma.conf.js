@@ -10,9 +10,11 @@ module.exports = function (config) {
             // test specific files
             "test-main.js",
             "node_modules/jasmine-sinon/lib/jasmine-sinon.js",
+            "node_modules/harmony-collections/harmony-collections.min.js", // provides Map for PhantomJS
+            "node_modules/promise-polyfill/Promise.min.js", // provides Promise for PhantomJS
 
             // source files
-            { pattern: "src/**/*.js", included: false },
+            { pattern: "dist/**/*.js", included: false },
 
             // test files
             { pattern: 'test/unit/**/*.js', included: false },
@@ -25,8 +27,21 @@ module.exports = function (config) {
         exclude: [
         ],
 
+        preprocessors: {
+            "dist/**/*.js": ["coverage"]
+        },
+
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ["progress"],
+        reporters: ["progress", "coverage"],
+
+        coverageReporter: {
+            dir: "test/coverage/",
+            reporters: [
+                { type: 'lcov', subdir: 'report-lcov' },
+                { type: 'text-summary', subdir: '.', file: 'coverage-summary.txt' },
+                { type: 'text' },
+            ]
+        },
 
         // web server port
         port: 9876,
@@ -41,7 +56,7 @@ module.exports = function (config) {
         autoWatch: true,
 
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ["Chrome"],
+        browsers: ["PhantomJS2"],
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
